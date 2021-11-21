@@ -1,0 +1,42 @@
+<!-- https://vuejs.org/v2/guide/instance.html -->
+<html>
+  <body>
+    <div id="app1">{{ a }}/{{ b }}
+        <button v-on:click="a=99; b=100">Click</button>
+    </div>
+
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script>
+    var data123 = {
+      a: 1,
+      b: 0,
+    };
+
+    // Object.freeze(data)
+
+    var vm = new Vue({
+      el: "#app1",
+      data: data123,
+      beforeCreate: function(){ console.log('beforeCreate') },
+      created: function(){ console.log('created') },
+      beforeMount: function(){ console.log('beforeMount') },
+      mounted: function(){ console.log('mounted') },
+      beforeUpdate: function(){ console.log('beforeUpdate') },
+      updated: function(){ console.log('updated') },
+      beforeDestroy: function(){ console.log('beforeDestroy') },
+      destroyed: function(){ console.log('destroyed') }
+      //created: () => console.log(this.a)
+    });
+
+    console.log("vm.$data === data",vm.$data === data123)
+    console.log("vm.data === data",vm.data === data123)
+    console.log("vm.$el === document.getElementById('app1')",vm.$el === document.getElementById('app1'))
+
+    vm.$watch('a', function(newV, oldV){
+        console.log("old: " + oldV + " -> new: " + newV)
+    })
+
+    // vm.$destroy();
+  </script>
+</html>
