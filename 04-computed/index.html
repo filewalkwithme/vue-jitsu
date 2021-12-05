@@ -1,0 +1,101 @@
+<!-- https://vuejs.org/v2/guide/syntax.html -->
+<html>
+  <body>
+    <div id="example">
+      <div>{{ msg }}</div>
+      <div>{{ reversedMsg }}</div>
+      <div>{{ revMsg() }}</div>
+      <div>{{ nowComputed }}</div>
+      <div>{{ nowMethod() }}</div>
+      <div>{{ fullName }}</div>
+      <div>{{ fullNameComputed }}</div>
+      <div id="watch-example">
+        <p>
+          ask a yes/no question:
+          <input v-model="question" />
+        </p>
+        <p>{{ answer }}</p>
+      </div>
+    </div>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+  <script>
+    var vm = new Vue({
+      el: "#example",
+      data: {
+        msg: "hello",
+        firstName: "foo",
+        lastName: "bar",
+        fullName: "foo bar",
+        question: "",
+        answer: "I cannot give you an answer until you ask a question!",
+      },
+      computed: {
+        reversedMsg: function () {
+          return this.msg.split("").reverse().join("");
+        },
+        nowComputed: function () {
+          return Date.now();
+        },
+        fullNameComputed: {
+          get: function () {
+            return this.firstName + "-" + this.lastName;
+          },
+          set: function (newValue) {
+            var names = newValue.split(" ");
+            this.firstName = names[0];
+            this.lastName = names[names.length - 1];
+          },
+        },
+      },
+      methods: {
+        revMsg: function () {
+          return this.msg.split("").reverse().join("");
+        },
+        nowMethod: function () {
+          return Date.now();
+        },
+        getFirstName: function () {
+          return this.firstName;
+        },
+        getLastName: function () {
+          return this.lastName;
+        },
+        getAnswer: function () {
+          if (this.question.indexOf("?") === -1) {
+            this.answer = "questions usually contain a question mark";
+            return;
+          }
+          this.answer = "thinking...";
+          var vm = this;
+          axios
+            .get("https://yesno.wtf/api")
+            .then(function (response) {
+              vm.answer = _.capitalize(response.data.answer);
+            })
+            .catch(function (error) {
+              vm.answer = "Error! Could not reach the API. " + error;
+            });
+        },
+      },
+      watch: {
+        firstName: function (val) {
+          this.fullName = val + " " + this.lastName;
+        },
+        lastName: function (val) {
+          this.fullName = this.firstName + " " + val;
+        },
+        question: function (newQ, oldQ) {
+            this.answer = "waiting for you to stop typing...";
+            this.debouncedGetAnswer();
+        },
+      },
+      created: function () {
+        // see: https://lodash.com/docs#debounce
+        this.debouncedGetAnswer = _.debounce(this.getAnswer, 500);
+      },
+    });
+  </script>
+</html>
