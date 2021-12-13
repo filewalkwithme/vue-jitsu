@@ -1,0 +1,40 @@
+<!-- https://vuejs.org/v2/guide/class-and-style.html -->
+<html>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script>
+    Vue.component("my-component", {
+      template: '<p class="foo bar">Hi</p>',
+    });
+  </script>
+  <body>
+    <div id="app">
+      <div
+        class="static"
+        v-bind:class="[activeC, errorC, 2>3 ? 'pimba': classObj]"
+      >
+        {{ msg }}
+      </div>
+      <my-component class="baz boo"></my-component>
+      <my-component v-bind:class="[classObj]"></my-component>
+      <div v-bind:style="myStyle">foo</div>
+    </div>
+  </body>
+  <script>
+    var vm = new Vue({
+      el: "#app",
+      data: {
+        msg: "ola",
+        classObj: {
+          isActive: true,
+          hasError: false,
+        },
+        activeC: "act",
+        errorC: "err",
+        myStyle: {
+          color: "red",
+          fontSize: "13px",
+        },
+      },
+    });
+  </script>
+</html>
